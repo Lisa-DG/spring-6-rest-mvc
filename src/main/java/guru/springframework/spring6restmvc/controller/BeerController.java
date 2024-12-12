@@ -43,7 +43,6 @@ public class BeerController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    //@RequestMapping(method = RequestMethod.POST)
     @PostMapping(BEER_PATH)
     public ResponseEntity<Void> handlePost(@RequestBody Beer beer) {
         Beer savedBeer = beerService.saveNewBeer(beer);
