@@ -1,6 +1,6 @@
 package guru.springframework.spring6restmvc.controller;
 
-import guru.springframework.spring6restmvc.model.Beer;
+import guru.springframework.spring6restmvc.model.BeerDTO;
 import guru.springframework.spring6restmvc.services.BeerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +26,7 @@ public class BeerController {
     private final BeerService beerService;
 
     @PatchMapping(BEER_PATH_ID)
-    public ResponseEntity<Void> updateBeerPatchById(@PathVariable("beerId")UUID id, @RequestBody Beer beer){
+    public ResponseEntity<Void> updateBeerPatchById(@PathVariable("beerId")UUID id, @RequestBody BeerDTO beer){
         beerService.patchBeerById(id, beer);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -38,14 +38,14 @@ public class BeerController {
     }
 
     @PutMapping(BEER_PATH_ID)
-    public ResponseEntity<Void> updateById(@PathVariable("beerId")UUID id, @RequestBody Beer beer) {
+    public ResponseEntity<Void> updateById(@PathVariable("beerId")UUID id, @RequestBody BeerDTO beer) {
         beerService.updateBeerById(id, beer);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @PostMapping(BEER_PATH)
-    public ResponseEntity<Void> handlePost(@RequestBody Beer beer) {
-        Beer savedBeer = beerService.saveNewBeer(beer);
+    public ResponseEntity<Void> handlePost(@RequestBody BeerDTO beer) {
+        BeerDTO savedBeer = beerService.saveNewBeer(beer);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Location", BEER_PATH + "/" + savedBeer.getId());
 
@@ -53,16 +53,16 @@ public class BeerController {
     }
 
     @GetMapping(BEER_PATH)
-    public List<Beer> listBeers(){
+    public List<BeerDTO> listBeers(){
         return beerService.listBeers();
     }
 
     @GetMapping(BEER_PATH_ID)
-    public Beer getBeerById(@PathVariable("beerId") UUID id){
+    public BeerDTO getBeerById(@PathVariable("beerId") UUID id){
 
         log.debug("Get Beer by Id - in controller");
 
-        return beerService.getBeerById(id);
+        return beerService.getBeerById(id).orElseThrow(NotFoundException::new);
     }
 
 }
