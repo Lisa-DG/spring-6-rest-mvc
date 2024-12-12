@@ -3,6 +3,7 @@ package guru.springframework.spring6restmvc.services;
 import guru.springframework.spring6restmvc.model.Customer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -11,7 +12,7 @@ import java.util.*;
 @Service
 public class CustomerServiceImpl implements CustomerService {
 
-    private Map<UUID, Customer> customerMap = new HashMap<>();
+    private final Map<UUID, Customer> customerMap = new HashMap<>();
 
     public CustomerServiceImpl() {
         Customer cust1 = Customer.builder()
@@ -54,4 +55,41 @@ public class CustomerServiceImpl implements CustomerService {
 
         return customerMap.get(id);
     }
+
+    @Override
+    public Customer saveNewCustomer(Customer customer) {
+        Customer savedCustomer = Customer.builder()
+                .id(UUID.randomUUID())
+                .createdDate(LocalDateTime.now())
+                .updateDate(LocalDateTime.now())
+                .name(customer.getName())
+                .version(customer.getVersion())
+                .build();
+
+        customerMap.put(savedCustomer.getId(), savedCustomer);
+        return savedCustomer;
+    }
+
+    @Override
+    public void updateCustomerById(UUID id, Customer customer) {
+        Customer existing = customerMap.get(id);
+        existing.setName(customer.getName());
+
+        customerMap.put(existing.getId(), existing);
+    }
+
+    @Override
+    public void deleteCustomerById(UUID id) {
+        customerMap.remove(id);
+    }
+
+    @Override
+    public void patchCustomerById(UUID id, Customer customer) {
+        Customer existing = customerMap.get(id);
+
+        if (StringUtils.hasText(customer.getName())) {
+            existing.setName(customer.getName());
+        }
+    }
+
 }
